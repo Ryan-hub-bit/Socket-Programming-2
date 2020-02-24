@@ -3,6 +3,7 @@
 # Tony Yang, tyang27
 
 from socket import *
+import sys
 import time
 
 # Stats
@@ -14,8 +15,10 @@ N_timeout = 0
 t_timeout = 1.0
 
 # Destination
-host = 'localhost'
-port = 12000
+#host = 'localhost'
+#port = 12000
+host = sys.argv[1]
+port = int(sys.argv[2])
 
 for i in range(N):
   # DGRAM for UDP
@@ -23,7 +26,8 @@ for i in range(N):
   skt.settimeout(t_timeout)
 
   # Message
-  message = f'Ping {i+1} {time.ctime()}'.encode()
+  t = time.strftime('%H:%M:%S', time.localtime())
+  message = f'Ping {i+1} {t}'.encode()
 
   start = time.time()
   skt.sendto(message, (host, port))
@@ -31,7 +35,7 @@ for i in range(N):
     result = skt.recv(10000).decode()
     end = time.time()
 
-    print(f'{result} {end-start}')
+    print(f'{result} RTT = {end-start}s')
     stats.append(end-start)
 
   except:
@@ -41,9 +45,9 @@ for i in range(N):
 min_RTT = min(stats) if len(stats) > 0 else 'All requests timed out'
 max_RTT = max(stats) if len(stats) > 0 else 'All requests timed out'
 avg_RTT = sum(stats) / len(stats) if len(stats) > 0 else 'All requests timed out'
-loss = (1 - len(stats) / N) * 100
+loss = (N_timeout / N) * 100
 
-print(f'min: {min_RTT}')
-print(f'max: {max_RTT}')
-print(f'avg: {avg_RTT}')
-print(f'packet loss rate: {loss}%')
+print(f'Max ping time was {max_RTT}s')
+print(f'Min ping time was {min_RTT}s')
+print(f'Avg ping time was  {avg_RTT}s')
+print(f'Package loss rate was {int(loss)}%')

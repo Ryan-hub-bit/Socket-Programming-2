@@ -41,7 +41,9 @@ for i in range(N):
 min_RTT = min(stats) if len(stats) > 0 else 'All requests timed out'
 max_RTT = max(stats) if len(stats) > 0 else 'All requests timed out'
 avg_RTT = sum(stats) / len(stats) if len(stats) > 0 else 'All requests timed out'
+loss = (1 - len(stats) / N) * 100
 
 print(f'min: {min_RTT}')
 print(f'max: {max_RTT}')
 print(f'avg: {avg_RTT}')
+print(f'packet loss rate: {loss}%')
